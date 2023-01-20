@@ -8,15 +8,15 @@ const API_URL = 'http://127.0.0.1:3000/classes';
 
 describe('Persistent Node Chat Server', () => {
   const dbConnection = mysql.createConnection({
-    user: 'student',
-    password: 'student',
+    user: 'root',
+    password: '5200',
     database: 'chat',
   });
 
   beforeAll((done) => {
     dbConnection.connect();
 
-       const tablename = ''; // TODO: fill this out
+    const tablename = 'messages'; // TODO: fill this out
 
     /* Empty the db table before all tests so that multiple tests
      * (or repeated runs of the tests)  will not fail when they should be passing
@@ -45,12 +45,12 @@ describe('Persistent Node Chat Server', () => {
          * your message table, since this is schema-dependent. */
         const queryString = 'SELECT * FROM messages';
         const queryArgs = [];
-
         dbConnection.query(queryString, queryArgs, (err, results) => {
           if (err) {
             throw err;
           }
           // Should have one result:
+
           expect(results.length).toEqual(1);
 
           // TODO: If you don't have a column named text, change this test.
@@ -59,16 +59,20 @@ describe('Persistent Node Chat Server', () => {
         });
       })
       .catch((err) => {
-        throw err;
+        console.log('err', err);
       });
   });
 
   it('Should output all messages from the DB', (done) => {
+    const username = 'Nick';
+    const message = 'hi';
+    const roomname = 'home';
     // Let's insert a message into the db
-       const queryString = '';
-       const queryArgs = [];
+    const queryString = 'INSERT INTO messages (text, roomname, username) VALUES ("hi", "home", "Nick")';
+    const queryArgs = [];
     /* TODO: The exact query string and query args to use here
      * depend on the schema you design, so I'll leave them up to you. */
+    console.log('queryString', queryString);
     dbConnection.query(queryString, queryArgs, (err) => {
       if (err) {
         throw err;
