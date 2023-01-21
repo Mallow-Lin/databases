@@ -2,28 +2,24 @@ var db = require('../db');
 
 module.exports = {
   getAll: function (callback) {
-    // dbCon.connect();
     const queryString = 'SELECT * FROM messages';
-    dbCon.query(queryString, (err, result) => {
+    db.dbConnection.query(queryString, (err, results) => {
       if (err) {
         throw err;
       } else {
-        callback(result);
+        console.log('result[0]', results);
+        callback(results);
       }
     });
-    // dbCon.end();
   },
-  create: function (username, text, roomname, callback) {
-    // dbCon.connect();
-    const queryString = 'INSERT INTO messages(username, text, roomname) VALUES ?';
-    const queryArgs = [username, text, roomname];
-    dbCon.query(queryString, queryArgs, (err, result) => {
+  create: function (data, callback) {
+    const queryString = `INSERT INTO messages(username, text, roomname) VALUES ("${data.username}", "${data.message}", "${data.roomname}")`;
+    db.dbConnection.query(queryString, (err) => {
       if (err) {
         throw err;
       } else {
-        callback(result);
+        callback();
       }
     });
-    // dbCon.end();
   }
 };

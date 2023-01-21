@@ -1,31 +1,24 @@
 var db = require('../db');
 
-dbCon = db.dbConnection;
-
 module.exports = {
   getAll: function (callback) {
-    // dbCon.connect();
-    const queryString = 'SELECT username FROM users';
-    dbCon.query(queryString, (err, results) => {
+    const queryString = 'SELECT * FROM users';
+    db.dbConnection.query(queryString, (err, results) => {
       if (err) {
         throw err;
       } else {
         callback(results);
       }
     });
-    // dbCon.end();
   },
-  create: function (val, callback) {
-    // dbCon.connect();
-    const queryString = `INSERT INTO users(username) VALUES ("${val})`;
-    dbCon.query(queryString, (err, result) => {
+  create: function (username, callback) {
+    const queryString = `INSERT INTO users(username) VALUES ('${username}')`;
+    db.dbConnection.query(queryString, (err) => {
       if (err) {
-        throw err;
+        callback(err);
       } else {
-        console.log('created user successfully');
-        callback(results);
+        callback();
       }
     });
-    // dbCon.end();
   }
 };
