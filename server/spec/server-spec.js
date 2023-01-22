@@ -64,12 +64,10 @@ describe('Persistent Node Chat Server', () => {
   });
 
   it('Should output all messages from the DB', (done) => {
-    const message = 'hi';
-    const roomname = 'home';
-    const username = 'Nick';
+    const [message, roomname] = ['How are you?', 'home'];
     // Let's insert a message into the db
-    const queryString = `INSERT INTO messages (text, roomname, username) VALUES ("${message}", "${roomname}", "${username}")`;
-    const queryArgs = [];
+    const queryString = 'INSERT INTO messages (text, roomname, userID) VALUES (?, ?, ?)';
+    const queryArgs = [message, roomname, 2];
     /* TODO: The exact query string and query args to use here
      * depend on the schema you design, so I'll leave them up to you. */
     dbConnection.query(queryString, queryArgs, (err) => {
@@ -81,13 +79,38 @@ describe('Persistent Node Chat Server', () => {
       axios.get(`${API_URL}/messages`)
         .then((response) => {
           const messageLog = response.data;
-          expect(messageLog[1].text).toEqual(message);
-          expect(messageLog[1].roomname).toEqual(roomname);
+          expect(messageLog[0].text).toEqual(message);
+          expect(messageLog[0].roomname).toEqual(roomname);
           done();
         })
         .catch((err) => {
           throw err;
         });
     });
+  });
+
+  it('Should insert new user to the DB', (done) => {
+    const username = 'Mallow';
+    axios.post(`${API_URL}/users`, { username })
+      .then(() => {
+        // Post a message to the node chat server:
+        const queryString = 'SELECT * FROM users WHERE users.username = ?';
+        const queryArgs = [username];
+        dbConnection.query(queryString, queryArgs, (err, results) => {
+          if (err) {
+            throw err;
+          }
+          // Should have one result:
+
+          expect(results.length).toEqual(1);
+
+          // TODO: If you don't have a column named text, change this test.
+          expect(results[0].username).toEqual(username);
+          done();
+        });
+      })
+      .catch((err) => {
+        console.log('err', err);
+      });
   });
 });

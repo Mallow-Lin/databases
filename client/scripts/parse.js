@@ -4,6 +4,7 @@ var Parse = {
 
   create: function(message, successCB, errorCB = null) {
 
+
     $.ajax({
       url: Parse.server,
       type: 'POST',
