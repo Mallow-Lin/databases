@@ -36,7 +36,7 @@ describe('Persistent Node Chat Server', () => {
     axios.post(`${API_URL}/users`, { username })
       .then(() => {
         // Post a message to the node chat server:
-        return axios.post(`${API_URL}/messages`, { username, message, roomname });
+        return axios.post(`${API_URL}/messages`, { username, roomname, message });
       })
       .then(() => {
         // Now if we look in the database, we should find the posted message there.
@@ -101,35 +101,46 @@ describe('Persistent Node Chat Server', () => {
           }
           expect(results[0].username).toEqual(username);
           done();
-          // axios.get(`${API_URL}/users`)
-          //   .then((response) => {
-          //     const result = response.data;
-          //     console.log('resultsss', result);
-          //     done();
-          //   })
-          //   .catch((err) => {
-          //     console.log('err', err);
-          //   });
         });
       });
+  });
 
-    // axios.post(`${API_URL}/users`, { username })
-    //   .then(() => {
-    //     // Post a message to the node chat server:
-    //     const queryString = 'SELECT * FROM users';
-    //     const queryArgs = [username];
-    //     dbConnection.query(queryString, queryArgs, (err, results) => {
-    //       if (err) {
-    //         throw err;
-    //       }
-    //       console.log('resultsss', results);
-    //       // TODO: If you don't have a column named text, change this test.
-    //       expect(results[0].username).toEqual(username);
-    //       done();
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.log('err', err);
-    //   });
+
+  it('Should outpull all messages from the DB', (done) => {
+    const queryString = 'SELECT * FROM messages';
+    const queryArgs = [];
+    const message1 = 'In mercy\'s name, three days is all I need.';
+    const message2 = 'How are you?';
+
+    dbConnection.query(queryString, queryArgs, (err) => {
+      if (err) {
+        throw err;
+      }
+      axios.get(`${API_URL}/messages`)
+        .then((response) => {
+          expect(response.data[0].text).toEqual(message1);
+          expect(response.data[1].text).toEqual(message2);
+          done();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+  });
+
+  it('Should return roomname from the DB', (done) => {
+    var roomname = 'home';
+    const queryString = 'Select * from messages WHERE roomname = ?';
+    const queryArgs = [roomname];
+    axios.get(`${API_URL}/messages`)
+      .then( () => {
+        dbConnection.query(queryString, queryArgs, (err, results) => {
+          if (err) {
+            throw err;
+          }
+          expect(results[0].roomname).toEqual(roomname);
+          done();
+        });
+      });
   });
 });
