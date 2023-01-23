@@ -7,8 +7,7 @@ module.exports = {
     });
   }, // a function which handles a get request for all messages
   post: function (req, res) {
-    var data = [req.body.message, req.body.roomname, req.body.username];
-    models.messages.create(data, (results) => {
+    models.messages.create(req, (results) => {
       res.json(results);
     });
   } // a function which handles posting a message to the database

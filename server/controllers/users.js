@@ -1,4 +1,5 @@
 var models = require('../models');
+const { User } = require('../db/index');
 
 module.exports = {
   get: function (req, res) {
@@ -7,7 +8,7 @@ module.exports = {
     });
   },
   post: function (req, res) {
-    models.users.create(req.body.username, (results) => {
+    models.users.create(req, (results) => {
       res.json(results);
     });
 

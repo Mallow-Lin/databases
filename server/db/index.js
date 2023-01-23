@@ -8,12 +8,22 @@ var mysql = require('mysql2');
 // user: 'root', password: ''
 // OR
 // user: 'root', password: 'some_password_you_created_at_install'
-
-const connection = mysql.createConnection({
+var Sequelize = require('sequelize');
+var db = new Sequelize('chat', 'root', '5200', {
   host: 'localhost',
-  user: 'root',
-  password: '5200',
-  database: 'chat'
+  dialect: 'mysql'
 });
 
-module.exports = connection;
+var User = db.define('users', {
+  user: Sequelize.STRING,
+});
+
+var Message = db.define('messages', {
+  user: Sequelize.STRING,
+  text: Sequelize.STRING,
+  room: Sequelize.STRING,
+});
+
+module.exports.Message = Message;
+module.exports.User = User;
+module.exports.db = db;
